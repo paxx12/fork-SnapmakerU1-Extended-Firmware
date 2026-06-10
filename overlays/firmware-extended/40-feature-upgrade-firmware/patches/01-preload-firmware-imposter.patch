@@ -1,13 +1,28 @@
 --- a/etc/init.d/S90lmd
 +++ b/etc/init.d/S90lmd
-@@ -5,6 +5,11 @@
+@@ -5,6 +5,26 @@
 
  PROG=/usr/bin/lmd
 
-+echo "Starting lmd with firmware-upgrade check disabled!"
-+export LD_PRELOAD="/usr/local/lib/libfirmware-imposter.so${LD_PRELOAD:+:$LD_PRELOAD}"
-+export FW_UPDATE_URL="/api/device/firmware/latest"
-+export FW_UPDATE_BLOCK=1
++EXTENDED_CFG="/home/lava/printer_data/config/extended/extended2.cfg"
++FIRMWARE_IMPOSTER=$(/usr/local/bin/extended-config.py get "$EXTENDED_CFG" upgrade firmware snapmaker)
++case "$FIRMWARE_IMPOSTER" in
++    stable|beta)
++        echo "Starting lmd with firmware-upgrade imposter (channel=$FIRMWARE_IMPOSTER)!"
++        export LD_PRELOAD="/usr/local/lib/libfirmware-imposter.so${LD_PRELOAD:+:$LD_PRELOAD}"
++        export FW_UPDATE_URL="/api/device/firmware/latest"
++        VERSION=$(cat /etc/VERSION 2>/dev/null)
++        BUILD_VERSION=$(cat /etc/BUILD_VERSION 2>/dev/null)
++        BUILD_PROFILE=$(cat /etc/BUILD_PROFILE 2>/dev/null)
++        export FW_UPDATE_REWRITE_URL="https://snapmakeru1-extended-firmware.pages.dev/api/device/firmware/latest?channel=$FIRMWARE_IMPOSTER&version=$VERSION&build_version=$BUILD_VERSION&build_profile=$BUILD_PROFILE"
++        ;;
++    none)
++        echo "Starting lmd with firmware-upgrade check disabled!"
++        export LD_PRELOAD="/usr/local/lib/libfirmware-imposter.so${LD_PRELOAD:+:$LD_PRELOAD}"
++        export FW_UPDATE_URL="/api/device/firmware/latest"
++        export FW_UPDATE_BLOCK=1
++        ;;
++esac
 +
  case "$1" in
      start)
