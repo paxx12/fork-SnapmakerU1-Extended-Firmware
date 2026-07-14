@@ -7,9 +7,9 @@ fi
 
 set -eo pipefail
 
-VERSION=v1.36.3
+VERSION=v1.37.2
 URL=https://github.com/fluidd-core/fluidd/releases/download/$VERSION/fluidd.zip
-SHA256=c341e43065c3a08c22ff1b5122e9e8b934c278f39df782bb476b35eed1799c5c
+SHA256=e42d4e8b14a3a0b20573485c882cc4dcfac33d9fbd946c8803a942be282e2b6e
 FILENAME=fluidd-$VERSION.zip
 
 rm -rf "$ROOTFS_DIR/home/lava/fluidd"
